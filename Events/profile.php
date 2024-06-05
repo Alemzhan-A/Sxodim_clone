@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'db_connection.php';
+require_once 'config.php';
 
 if (!isset($_SESSION['username'])) {
     header("Location: login.php");
@@ -9,6 +10,13 @@ if (!isset($_SESSION['username'])) {
 
 $username = $_SESSION['username'];
 
+$client = getClient();
+if (!$client->getAccessToken()) {
+    header('Location: oauth2callback.php');
+    exit();
+}
+
+// Получение бронирований пользователя
 $sql = "SELECT * FROM bookings WHERE username = ?";
 $bookings = [];
 
@@ -77,9 +85,13 @@ $mysqli->close();
                             <td><?php echo htmlspecialchars($booking['event']['time']); ?></td>
                             <td><?php echo htmlspecialchars($booking['event']['place']); ?></td>
                             <td>
-                                <form action="cancel_booking.php" method="post">
+                                <form action="cancel_booking.php" method="post" style="display:inline;">
                                     <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
                                     <button type="submit">Отменить</button>
+                                </form>
+                                <form action="add_to_calendar.php" method="post" style="display:inline;">
+                                    <input type="hidden" name="booking_id" value="<?php echo $booking['id']; ?>">
+                                    <button type="submit">Добавить в календарь</button>
                                 </form>
                             </td>
                         </tr>
