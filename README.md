@@ -19,4 +19,5 @@ CREATE TABLE users (
 );
 
 7)Скачать папку Events и переместить ее в xampp/htdocs
+
 8) Ввести в поисковую строку localhost/events/index.php
